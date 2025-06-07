@@ -5,8 +5,8 @@ Config = {
     WHTitle = "New Job Application",
     WHColor = 5814783,
     WHName = "Job Applications",
-    WHLink = "https://discord.com/api/webhooks/1370331759748579398/X-UZc58KZGM6sDeDtRx3sWf-aLfcRlihhd43avvoWahYkxqaTiV5v3dpYEjgyvV2VsLB",
-    WHLogo = "https://cdn.discordapp.com/attachments/1099372115058229310/1308758906754830407/170x100.png?ex=681e9276&is=681d40f6&hm=0e5af5242802442c736de22d4b847574815dffc5053937a663fb96ff15704e96&",
+    WHLink = "discord hook here",
+    WHLogo = "discord link here for logo",
 
     AvailableJobs = {
         { job = 'vallaw', label = 'Valentine Deputy', grade = 0 },
