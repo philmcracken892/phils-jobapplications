@@ -1,8 +1,8 @@
 local isAdmin = false
-local createdBlips = {}  -- Table to store created blips
-local prompts = {}       -- Table to store prompts
+local createdBlips = {}  
+local prompts = {}       
 
--- Setup prompts
+
 local playerPrompt = nil
 RegisterNetEvent('rsg_job_application:setIsAdmin', function(adminStatus)
     isAdmin = adminStatus
@@ -12,7 +12,7 @@ Citizen.CreateThread(function()
     TriggerServerEvent('rsg_job_application:checkIsAdmin')
 
     for _, loc in ipairs(Config.Locations) do
-        -- Blip setup
+       
         if loc.showBlip then
             local blip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, loc.coords.x, loc.coords.y, loc.coords.z)
             SetBlipSprite(blip, loc.blipData.sprite, true)
@@ -20,10 +20,10 @@ Citizen.CreateThread(function()
             Citizen.InvokeNative(0x9CB1A1623062F402, blip, loc.blipData.name)
             Citizen.InvokeNative(0x662D364ABF16DE2F, blip, GetHashKey("BLIP_MODIFIER_MP_COLOR_" .. tostring(loc.blipData.color)))
             Citizen.InvokeNative(0x9029B2F3DA924928, blip, true)
-            table.insert(createdBlips, blip)  -- Store blip in the createdBlips table
+            table.insert(createdBlips, blip)  
         end
 
-        -- Prompt setup
+        
         local prompt = PromptRegisterBegin()
         PromptSetControlAction(prompt, loc.promptKey)
         PromptSetText(prompt, Citizen.InvokeNative(0xFA925AC00EB830B9, 10, "LITERAL_STRING", loc.promptText, Citizen.ResultAsLong()))
@@ -62,11 +62,11 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Open job application menu for players
+
 function OpenJobApplicationMenu()
     local options = {}
 
-    -- Add option to manage applications first (move to the top)
+   
     table.insert(options, {
         title = 'Manage Applications',
         description = 'View and manage pending job applications.',
@@ -76,7 +76,7 @@ function OpenJobApplicationMenu()
         end
     })
 
-    -- Add application submission options
+    
     for _, job in ipairs(Config.AvailableJobs) do
         table.insert(options, {
             title = 'Apply for ' .. job.label,
@@ -105,7 +105,7 @@ function OpenJobApplicationMenu()
         })
     end
 
-    -- Register and show the job application menu with the options
+   
     lib.registerContext({
         id = 'job_application_menu',
         title = 'Job Application Center',
@@ -115,13 +115,13 @@ function OpenJobApplicationMenu()
 end
 
 
--- Register client event for opening admin menu
+
 RegisterNetEvent('rsg_job_application:openAdminMenu')
 AddEventHandler('rsg_job_application:openAdminMenu', function(applications)
     OpenAdminApplicationMenu(applications)
 end)
 
--- Open application management menu
+
 function OpenAdminApplicationMenu(applications)
     if not applications or type(applications) ~= 'table' then
         lib.notify({
@@ -150,7 +150,7 @@ function OpenAdminApplicationMenu(applications)
                 menu = 'application_actions_' .. app.id
             })
         else
-            -- Handle invalid applications if necessary
+            
         end
     end
 
@@ -209,7 +209,7 @@ function OpenAdminApplicationMenu(applications)
     end
 end
 
--- Cleanup blips and prompts when resource stops
+
 AddEventHandler('onResourceStop', function(resourceName)
     if resourceName == GetCurrentResourceName() then
         -- Remove all created blips
@@ -219,7 +219,7 @@ AddEventHandler('onResourceStop', function(resourceName)
             end
         end
 
-        -- Disable and hide all prompts
+       
         for _, entry in ipairs(prompts) do
             if entry.prompt then
                 PromptSetEnabled(entry.prompt, false)
