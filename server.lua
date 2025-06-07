@@ -1,12 +1,12 @@
 if GetResourceState('rsg-core') == 'started' then
     local RSGCore = exports['rsg-core']:GetCoreObject()
 
-    -- Admin permission check
+   
     local function IsPlayerAdmin(src)
         return IsPlayerAceAllowed(src, "admin")
     end
 
-    -- Create the job applications table
+    
     MySQL.ready(function()
         MySQL.execute([[
             CREATE TABLE IF NOT EXISTS job_applications (
@@ -20,8 +20,7 @@ if GetResourceState('rsg-core') == 'started' then
             )
         ]], {})
     end)
-
-    -- Send job application to Discord
+ 
     local function SendApplicationToDiscord(title, player, job, grade, reason, color)
         if not Config.EnableWebHook or not Config.WHLink or Config.WHLink == "" then return end
 
@@ -56,14 +55,14 @@ if GetResourceState('rsg-core') == 'started' then
         }), { ['Content-Type'] = 'application/json' })
     end
 
-    -- Submit application
+  
     RegisterServerEvent('rsg_job_application:submitApplication')
     AddEventHandler('rsg_job_application:submitApplication', function(job, grade, reason)
         local src = source
         local Player = RSGCore.Functions.GetPlayer(src)
         if not Player then return end
 
-        -- Validate job
+       
         local isValid = false
         for _, j in pairs(Config.AvailableJobs) do
             if j.job == job and j.grade == grade then
@@ -96,7 +95,7 @@ if GetResourceState('rsg-core') == 'started' then
         end)
     end)
 
-    -- Get all pending applications (Admin only)
+   
     RegisterServerEvent('rsg_job_application:getApplications')
     AddEventHandler('rsg_job_application:getApplications', function()
         local src = source
@@ -109,7 +108,6 @@ if GetResourceState('rsg-core') == 'started' then
         end)
     end)
 
-    -- Approve application (Admin only)
     RegisterServerEvent('rsg_job_application:approveApplication')
     AddEventHandler('rsg_job_application:approveApplication', function(appId, citizenid, job, grade)
         local src = source
@@ -131,17 +129,17 @@ if GetResourceState('rsg-core') == 'started' then
                     })
                     SendApplicationToDiscord("Application Approved", { citizenid = citizenid, firstname = firstname, lastname = lastname }, job, grade, "Application Approved", 65280)
                 else
-                    -- If offline, fetch current job data and update it properly
+                   
                     MySQL.query('SELECT job, charinfo FROM players WHERE citizenid = ?', { citizenid }, function(result)
                         if result and result[1] then
                             local charinfo = json.decode(result[1].charinfo)
                             local currentJob = json.decode(result[1].job)
                             
-                            -- Update job data
+                           
                             currentJob.name = job
                             currentJob.grade.level = grade
                             
-                            -- Update database with new job data
+                            
                             MySQL.update('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(currentJob), citizenid }, function(updateRows)
                                 if updateRows > 0 then
                                     SendApplicationToDiscord("Application Approved", {
@@ -161,7 +159,7 @@ if GetResourceState('rsg-core') == 'started' then
         end)
     end)
 
-    -- Deny application (Admin only)
+    
     RegisterServerEvent('rsg_job_application:denyApplication')
     AddEventHandler('rsg_job_application:denyApplication', function(appId, citizenid)
         local src = source
@@ -186,7 +184,7 @@ if GetResourceState('rsg-core') == 'started' then
                         lastname = lastname
                     }, "N/A", "N/A", "Application Denied", 16711680)
                 else
-                    -- If offline, fetch name from DB
+                   
                     MySQL.query('SELECT charinfo FROM players WHERE citizenid = ?', { citizenid }, function(result)
                         if result and result[1] then
                             local charinfo = json.decode(result[1].charinfo)
